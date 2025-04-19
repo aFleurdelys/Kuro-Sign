@@ -1,0 +1,27 @@
+name: Kurobbs Check-in
+
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install node-fetch -g
+
+      - name: Run app
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        run: node app.js
