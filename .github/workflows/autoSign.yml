@@ -1,4 +1,4 @@
-name: Kurobbs Check-in
+name: Kuro AutoSign
 
 on:
   schedule:
