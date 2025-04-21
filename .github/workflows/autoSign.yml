@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  checkin:
+  run_script:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +19,10 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install -g node-fetch
+        run: npm install
 
       - name: Run app
         env:
           TOKEN: ${{ secrets.TOKEN }}
+          ACCESSTOKENURL: ${{ secrets.ACCESSTOKENURL }}
         run: node app.js
