@@ -69,10 +69,11 @@ class KuroAutoSign {
   }
 
   async post (url, data = {}) {
+    let body = new URLSearchParams(data)
     const response = await fetch(url, {
       method: "POST",
       headers: this.headers,
-      body: data
+      body,
     });
     const json = await response.json();
     if (!json.success && json.code !== 0) {
@@ -85,9 +86,9 @@ class KuroAutoSign {
     let result = []
     try {
       // 社区签到
-      const forumSign = await this.post(forumSignIn, { gameId: 3 })
+      const forumSign = await this.post(forumSignIn, { gameId: 2 })
 
-      result.push('【社区签到】: ' + forumSign.success ? '✅成功' : '❌' + forumSign.msg)
+      result.push(`【社区签到】: ${ forumSign.success ? '✅成功' : '❌' + forumSign.msg }`)
       // 取绑定游戏账号列表
       const data = await this.post(gameRoles)
 
@@ -108,7 +109,7 @@ class KuroAutoSign {
         // 执行签到
         let response = await this.post(gameSignIn, params)
         // 保存签到结果
-        result.push(`【${role.serverName}】\n ` + response.success ? '✅': '❌' + response.data)
+        result.push(`【${role.serverName}】\n ${ response.success ? '✅': '❌' + response.data }`)
       }
       return await sendMessage(result)
     } catch (e) {
