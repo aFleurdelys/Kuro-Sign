@@ -26,7 +26,7 @@ async function sendMessage (message) {
       "duplicate_check_interval": 1800
     }
 
-    let res = await fetch(process.env.ACCESSTOKENURL)
+    let res = await getAccessToken()
     if (!res.ok) {
       console.log(res.status + res.statusText)
       return { code: res.status, msg: '获取access_token失败~' }
@@ -51,6 +51,43 @@ async function sendMessage (message) {
     return { code: e.code, msg: e.message }
   }
 }
+
+async function getAccessToken(){
+  // 生成签名参数
+  const API_KEY = process.env.API_KEY;
+  const timestamp = Date.now().toString();
+  const nonce = crypto.randomUUID();
+  const requestBody = JSON.stringify({}); // 如果有请求体需要参与签名
+
+// 生成签名
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(API_KEY),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const data = encoder.encode(`${timestamp}${nonce}${requestBody}`);
+  const signature = await crypto.subtle.sign("HMAC", key, data);
+  const hexSign = Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+
+  // 发送请求
+  return await fetch(process.env.ACCESSTOKENURL, {
+    method: 'POST', // 或 GET
+    headers: {
+      'X-Api-Key': API_KEY,
+      'X-Timestamp': timestamp,
+      'X-Nonce': nonce,
+      'X-Signature': hexSign,
+      'Content-Type': 'application/json'
+    },
+    body: requestBody
+  });
+}
+
 
 class KuroAutoSign {
   constructor (token) {
