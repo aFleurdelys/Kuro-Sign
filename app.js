@@ -1,15 +1,15 @@
 import fetch from 'node-fetch'
 
 // 取绑定游戏账号列表
-let gameRoles =  `https://api.kurobbs.com/gamer/role/default`
+let gameRoles = 'https://api.kurobbs.com/gamer/role/default'
 // 取签到配置信息 V2
-let initSignIn =  'https://api.kurobbs.com/encourage/signIn/initSignInV2'
+let initSignIn = 'https://api.kurobbs.com/encourage/signIn/initSignInV2'
 // 游戏签到 V2
-let gameSignIn =  'https://api.kurobbs.com/encourage/signIn/v2'
+let gameSignIn = 'https://api.kurobbs.com/encourage/signIn/v2'
 // 社区签到
-let forumSignIn =  'https://api.kurobbs.com/user/signIn'
+let forumSignIn = 'https://api.kurobbs.com/user/signIn'
 
-async function sendMessage (msg) {
+async function sendMessage (message) {
   try {
     let params = {
       "touser": "@all",
@@ -18,7 +18,7 @@ async function sendMessage (msg) {
       "agentid": 1000002,
       "msgtype": "text",
       "text": {
-        "content": msg.join('\n')
+        "content": message
       },
       "safe": 0,
       "enable_id_trans": 0,
@@ -27,19 +27,28 @@ async function sendMessage (msg) {
     }
 
     let res = await fetch(process.env.ACCESSTOKENURL)
-    if(!res.ok)
-      return false
+    if (!res.ok) {
+      console.log(res.status + res.statusText)
+      return { code: res.status, msg: '获取access_token失败~' }
+    }
     const data = await res.json();
 
-    return await fetch(`https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${ data.access_token }`, {
+    let result = await fetch(`https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${ data.access_token }`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(params)
     })
+    if (!result.ok) {
+      console.log(result.status + result.statusText)
+      return { code: res.status, msg: '发送失败~' }
+    }
+    result = await result.json()
+    result.errmsg === 'ok' ? console.log('✅ 发送成功') : console.log(`❌ 发送失败: ${ result.errcode }\n${ result.errmsg }`)
   } catch (e) {
-    console.log(e)
+    console.log("❌", e.message)
+    return { code: e.code, msg: e.message }
   }
 }
 
@@ -69,17 +78,22 @@ class KuroAutoSign {
   }
 
   async post (url, data = {}) {
-    let body = new URLSearchParams(data)
-    const response = await fetch(url, {
-      method: "POST",
-      headers: this.headers,
-      body,
-    });
-    const json = await response.json();
-    if (!json.success && json.code !== 0) {
-      console.error(`❌ API Error: ${ json.msg }`);
+    try {
+      let body = new URLSearchParams(data)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: this.headers,
+        body,
+      });
+      if (!response.ok) {
+        console.log(response.status + response.statusText)
+        return { success: false, msg: '签到失败' }
+      }
+      return await response.json();
+    } catch (e) {
+      console.error(`❌ API Error: ${ e.msg }`);
+      return { success: false, msg: '签到失败' }
     }
-    return json;
   }
 
   async start () {
@@ -109,11 +123,13 @@ class KuroAutoSign {
         // 执行签到
         let response = await this.post(gameSignIn, params)
         // 保存签到结果
-        result.push(`【${role.serverName}】\n ${ response.success ? '✅': '❌' + response.data }`)
+        response.data = response.data || response.msg
+        result.push(`【${ role.serverName }】\n ${ response.success ? '✅' : '❌' + response.data }`)
       }
-      return await sendMessage(result)
+      return await sendMessage(result.join('\n'))
     } catch (e) {
       console.error("❌ 出错:", e.message || e);
+      return { code: e.code, msg: e.message }
     }
   }
 }
@@ -122,8 +138,7 @@ class KuroAutoSign {
 (async () => {
   try {
     const client = new KuroAutoSign(process.env.TOKEN);
-    const msg = await client.start();
-    console.log("✅", msg);
+    await client.start();
   } catch (err) {
     console.error("❌ 出错:", err.message || err);
     process.exit(1);
