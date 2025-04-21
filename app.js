@@ -1,23 +1,54 @@
 import fetch from 'node-fetch'
 
 // 取绑定游戏账号列表
-let findRoleList =  `https://api.kurobbs.com/user/role/findRoleList`
+let gameRoles = `https://api.kurobbs.com/gamer/role/default`
 // 取签到配置信息 V2
-let initSignIn =  'https://api.kurobbs.com/encourage/signIn/initSignInV2'
+let initSignIn = 'https://api.kurobbs.com/encourage/signIn/initSignInV2'
 // 游戏签到 V2
-let gameSignIn =  'https://api.kurobbs.com/encourage/signIn/v2'
+let gameSignIn = 'https://api.kurobbs.com/encourage/signIn/v2'
 // 社区签到
-let forumSignIn =  'https://api.kurobbs.com/user/signIn'
+let forumSignIn = 'https://api.kurobbs.com/user/signIn'
+
+async function sendMessage (msg) {
+  try {
+    let params = {
+      "touser": "@all",
+      "toparty": "@all",
+      "totag": "@all",
+      "agentid": 1000002,
+      "msgtype": "text",
+      "text": {
+        "content": msg.join('\n')
+      },
+      "safe": 0,
+      "enable_id_trans": 0,
+      "enable_duplicate_check": 0,
+      "duplicate_check_interval": 1800
+    }
+
+    let access_token = await fetch(process.env.ACCESSTOKENURL).access_token
+
+    return await fetch(`https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${ access_token }`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(params)
+    })
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 class KuroAutoSign {
   constructor (token) {
     this.token = token;
     this.headers = {
-      "source": "android",
+      "source": "h5",
       "token": this.token,
       "content-type": "application/x-www-form-urlencoded; charset=utf-8",
       "user-agent":
-        "Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.2.7 KuroGameBox/2.2.7"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0"
     };
   }
 
@@ -36,26 +67,35 @@ class KuroAutoSign {
   }
 
   async start () {
+    let result = []
     try {
       // 社区签到
-      await this.post(forumSignIn, { gameId: 3 })
+      const forumSign = await this.post(forumSignIn, { gameId: 3 })
 
+      result.push('【社区签到】: ' + forumSign.success ? '✅成功' : '❌' + forumSign.msg)
       // 取绑定游戏账号列表
-      const data = await this.post(findRoleList, { gameId: 3 })
+      const data = await this.post(gameRoles)
 
-      const params = {
-        gameId: data.gameId || 2,
-        serverId: data.serverId,
-        roleId: data.roleId || 0,
-        userId: data.userId || 0
-      };
-      // 加载签到
-      await this.post(initSignIn, params)
+      let gameRoleList = data.data.defaultRoleList
 
-      const now = new Date();
-      params.reqMonth = String(now.getMonth() + 1).padStart(2, "0");
+      for (const role of gameRoleList) {
+        const params = {
+          gameId: role.gameId,
+          serverId: role.serverId,
+          roleId: role.roleId,
+          userId: role.userId
+        };
+        // 加载签到
+        await this.post(initSignIn, params)
 
-      return await this.post(gameSignIn, params);
+        const now = new Date();
+        params.reqMonth = String(now.getMonth() + 1).padStart(2, "0");
+        // 执行签到
+        let response = await this.post(gameSignIn, params)
+        // 保存签到结果
+        result.push(`【${ role.serverName }】\n ` + response.success ? '✅' : '❌' + response.data)
+      }
+      return await sendMessage(result)
     } catch (e) {
       console.error("❌ 出错:", e.message || e);
     }
