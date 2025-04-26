@@ -163,6 +163,7 @@ class KuroAutoSign {
         response.data = response.data || response.msg
         result.push(`【${ role.serverName }】\n ${ response.success ? '✅' : '❌' + response.data }`)
       }
+      console.log('-'.repeat(30))
       console.log(result.join('\n' + '-'.repeat(30) + '\n'));
       // 企业微信推送
       return await sendMessage(result.join('\n'))
@@ -178,6 +179,7 @@ class KuroAutoSign {
   try {
     const client = new KuroAutoSign(process.env.TOKEN);
     let data = await client.start();
+    console.log('-'.repeat(30))
     console.log(`[${data.code}]: ${data.msg}`)
   } catch (err) {
     console.error("❌ 出错:", err.message || err);
