@@ -25,4 +25,5 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
           ACCESSTOKENURL: ${{ secrets.ACCESSTOKENURL }}
+          API_KEY: ${{ secrets.API_KEY }}
         run: node app.js
