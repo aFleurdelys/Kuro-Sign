@@ -139,7 +139,7 @@ class KuroAutoSign {
       // 社区签到
       const forumSign = await this.post(forumSignIn, { gameId: 2 })
 
-      result.push(`【社区签到】: ${ forumSign.success ? '✅成功' : '❌' + forumSign.msg }`)
+      result.push(`【社区签到】\n ${ forumSign.success ? '✅成功' : '❌' + forumSign.msg }`)
       // 取绑定游戏账号列表
       const data = await this.post(gameRoles)
 
