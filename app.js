@@ -120,7 +120,7 @@ export class App {
             let result = await KuroApi.getData('widget', params);
 
             if (result.code !== 200 || !result.data) {
-                console.error('没有找到绑定角色，退出');
+                console.error(`[${ result.code }]: ${ result.msg }`);
                 return;
             }
             let data = result.data;

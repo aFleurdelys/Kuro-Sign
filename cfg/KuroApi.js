@@ -2,19 +2,21 @@ import fetch from "node-fetch";
 
 export class KuroApi {
     constructor() {
-        this.token = process.env.TOKEN;
+        this.token = process.env.token;
         this.headers = {
             "Host": "api.kurobbs.com",
             "Connection": "keep-alive",
-            "Content-Length": "83",
+            "Content-Length": "85",
             "Pragma": "no-cache",
             "Cache-Control": "no-cache",
-            "Accept": "application/json, text/plain, */*",
-            "devCode": "171.37.188.39, Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.2.7 KuroGameBox/2.2.7",
-            "source": "android",
-            "User-Agent": "Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.2.7 KuroGameBox/2.2.7",
-            "token": this.token,
+            "b-at": "f7158ce6b2234299b8bce6ccf04e37d3",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2",
             "Content-Type": "application/x-www-form-urlencoded",
+            "did": "0A138351777EFC8605D59F7A035452E0D93F0F0F",
+            "Accept": "application/json, text/plain, */*",
+            "devCode": "171.37.188.39, Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2",
+            "token": this.token,
+            "source": "android",
             "Origin": "https://web-static.kurobbs.com",
             "X-Requested-With": "com.kurogame.kjq",
             "Sec-Fetch-Site": "same-site",
