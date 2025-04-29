@@ -14,20 +14,20 @@ const common = {
 
         console.log("-".repeat(50));
         console.log(`游戏：${ gameName }`);
-        console.log(`时间：${ serverTime }`);
-        console.log(`状态：${ signInTxt }`);
+        console.log(`时间：${ new Date(serverTime * 1000).toLocaleString() }`);
+        console.log(`签到：${ signInTxt }`);
         console.log("-".repeat(50));
 
         // 收集需要遍历的对象
         const datas = [ energyData, livenessData, ...[].concat(dailyData) ];  // dailyData可能是数组
 
         _.each(datas, (data) => {
-            if (!data || !data.name) return;  // 防止异常
-            let name = data.name;
+            if (!data) return;  // 防止异常
+            let name = data.name || data.key;
             if (name === '血清') name = '血　　清'; // 美化对齐
 
             let cur = data.cur ?? 0;
-            let max = data.total ?? 100; // 有些数据 total 可能缺失，默认100
+            let max = data.total || 100; // 有些数据 total 可能缺失，默认100
             if (gameId === 3) {
                 if (name.includes('结晶波片')) max = 240;
                 if (name.includes('活跃度')) max = 100;
@@ -37,12 +37,12 @@ const common = {
             if (cur > max) cur = max;  // 防止溢出
             const bar = progBar(cur, max);
 
-            console.log(`${ name.padEnd(8, ' ') }：[${ bar }] ${ cur }/${ max } `);
+            console.log(`${ name.padEnd(4, ' ') }: [${ bar }] ${ cur }/${ max } `);
         });
         console.log("-".repeat(50));
         if (data.bossData) {
-            await bossResult(data.bossData)
-            await monthResult(data.monthData)
+            await bossData(data.bossData)
+            await monthData(data.monthData)
         }
     }
 }
@@ -52,17 +52,17 @@ function progBar (cur, max) {
     return '█'.repeat(filled) + '═'.repeat(25 - filled);
 }
 
-async function bossResult (bossData) {
+async function bossData (bossData) {
     bossData.forEach(boss => {
         let {
-            name, goods, value,
+            name, key, value,
             cur, total,
             expireTimeStamp, refreshTimeStamp
         } = boss
         if (total === 0) total = 100;
         const times = expireTimeStamp ?? refreshTimeStamp ?? null;
         const bossBar = progBar(cur, total)
-        console.log(`${ name ?? '' }(${ goods ?? '' }) |${ bossBar }| ${ value ?? '' }`.trim());
+        console.log(`${ name ?? '' }(${ key ?? '' }) |${ bossBar }| ${ value ?? '' }`.trim());
         if (times !== null) {
             console.log(` >>> 刷新时间：${ new Date(times * 1000).toLocaleString() }`);
         }
@@ -70,7 +70,7 @@ async function bossResult (bossData) {
     console.log("-".repeat(50));
 }
 
-async function monthResult (monthData) {
+async function monthData (monthData) {
     let {
         gameLevel, currentBlackCard,
         currentDevelopResource, currentTradeCredit,
