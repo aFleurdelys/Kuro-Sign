@@ -10,10 +10,10 @@ const common = {
 
     /** 打印 */
     async makeMessage (data) {
-        let { gameId, gameName, serverTime, signInTxt, energyData, livenessData, dailyData } = data
+        let { gameId, serverName, serverTime, signInTxt, energyData, livenessData, dailyData } = data
 
         console.log("-".repeat(50));
-        console.log(`游戏：${ gameName }`);
+        console.log(`游戏：${ serverName }`);
         console.log(`时间：${ new Date(serverTime * 1000).toLocaleString() }`);
         console.log(`签到：${ signInTxt }`);
         console.log("-".repeat(50));
@@ -24,7 +24,7 @@ const common = {
         _.each(datas, (data) => {
             if (!data) return;  // 防止异常
             let name = data.name || data.key;
-            if (name === '血清') name = '血　　清'; // 美化对齐
+            if (name === '血清') name = ' 血　清 '; // 美化对齐
 
             let cur = data.cur ?? 0;
             let max = data.total || 100; // 有些数据 total 可能缺失，默认100
@@ -37,7 +37,7 @@ const common = {
             if (cur > max) cur = max;  // 防止溢出
             const bar = progBar(cur, max);
 
-            console.log(`${ name.padEnd(4, ' ') }: [${ bar }] ${ cur }/${ max } `);
+            console.log(`${ name.padEnd(4, '　') }: [${ bar }] ${ cur }/${ max } `);
         });
         console.log("-".repeat(50));
         if (data.bossData) {

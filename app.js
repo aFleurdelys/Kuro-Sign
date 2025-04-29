@@ -128,7 +128,7 @@ export class App {
             data.signInTxt = await app.gameSignIn(data)
             // 数据处理
             if (isGr) {
-                data.gameName = '战双: 帕弥什'
+                data.serverName = '战双: 帕弥什'
                 data.energyData = data.actionData
                 data.livenessData = data.dormData
                 data.dailyData = data.activeData
