@@ -1,9 +1,9 @@
 name: 鸣潮签到
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "30 11 * * *"
-  workflow_dispatch:
 
 jobs:
   Run_Script:

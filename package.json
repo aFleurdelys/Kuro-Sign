@@ -1,0 +1,9 @@
+{
+  "name": "auto-sign",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.3.2"
+  }
+}

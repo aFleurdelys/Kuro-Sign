@@ -1,9 +1,9 @@
 name: 社区签到
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "30 1 * * *"
-  workflow_dispatch:
 
 jobs:
   Run_Script:

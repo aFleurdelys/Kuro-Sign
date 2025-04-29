@@ -1,9 +1,9 @@
 name: 战双签到
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "30 8 * * *"
-  workflow_dispatch:
 
 jobs:
   Run_Script:
