@@ -19,8 +19,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: |
-          npm install -g lodash node-fetch
+        run: npm install
 
       - name: Run App
         env:
