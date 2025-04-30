@@ -11,9 +11,9 @@ export class App {
         try {
             // 获取个人信息
             const mine = await KuroApi.getData('mine');
-            const userId = mine?.data?.userId;
+            const userId = mine?.data?.mine?.userId;
             if (!userId) {
-                console.log(mine);
+                console.error(`[${ mine.code }]: ${ mine.msg }`);
                 return;
             }
             // 2. 获取任务列表

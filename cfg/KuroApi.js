@@ -108,7 +108,7 @@ export class KuroApi {
             // 取任务列表
             taskList: {
                 url: `${ this.kuroApiUrl }/encourage/level/getTaskProcess`,
-                body: `userId=${ data.userId }`,
+                body: `gameId=0&userId=${ data.userId }`,
             },
             // 取库洛币总数
             totalGold: {
