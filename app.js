@@ -35,6 +35,10 @@ export class App {
         pageIndex: 1,
         pageSize: 20,
       });
+      if (!forumList.success) {
+        console.log(`[${forumList.code}]: ${forumList.msg}`)
+        return;
+      }
       const postList = forumList?.data?.postList?.slice(0, max) || [] // 数组
       if (!postList.length) {
         return;
