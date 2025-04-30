@@ -11,7 +11,7 @@ export class App {
         try {
             // 获取个人信息
             const mine = await KuroApi.getData('mine');
-            const userId = mine?.data?.userId;
+            const userId = mine?.data?.mine?.userId;
             if (!userId) {
                 console.log(mine);
                 return;
