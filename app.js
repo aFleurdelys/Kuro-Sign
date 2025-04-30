@@ -1,4 +1,5 @@
 import KuroApi from './cfg/KuroApi.js';
+import lodash from "lodash";
 import common from "./cfg/common.js";
 
 
@@ -36,7 +37,7 @@ export class App {
         pageSize: 20,
       });
       if (!forumList.success) {
-        console.log(`[${forumList.code}]: ${forumList.msg}`)
+        console.log(`[${ forumList.code }]: ${ forumList.msg }`)
         return;
       }
       const postList = forumList?.data?.postList?.slice(0, max) || [] // 数组
@@ -51,7 +52,7 @@ export class App {
         '分享1次帖子': (post) => KuroApi.getData('shareTask', { postId: post.postId }),
       };
       // 6. 执行任务
-      console.log('-'.repeat(50))
+      console.log(common.single)
       for (const task of dailyTask) {
         const { remark, process } = task;
         if (process >= 1.0) {
@@ -66,13 +67,15 @@ export class App {
         }
         console.log(`>>>[${ remark }]: ✅已完成`);
       }
-      console.log('-'.repeat(50))
+      console.log(common.single)
       // 6. 查询总库洛币
       const data = await KuroApi.getData('totalGold');
+      let gold = lodash.sumBy(dailyTask, (v) => v.gainGold)
+      console.log(`今日库洛币: ${ gold } 个`)
       if (data?.data) {
         console.log(`总库洛币: ${ data.data.goldNum } 个`);
-        console.log('-'.repeat(50))
       }
+      console.log(common.single)
     } catch (error) {
       console.error('执行出错:', error.message);
     }
@@ -133,12 +136,11 @@ export class App {
       // 数据处理
       if (isGr) {
         data.serverName = '战双: 帕弥什'
-        data.energyData = data.actionData
-        data.livenessData = data.dormData
-        data.dailyData = data.activeData
+        let temp = { actionData: 'energyData', dormData: 'livenessData', activeData: 'battlePassData' }
+        data = lodash.mapKeys(data, (value, key) => {
+          return temp[key] || key;
+        })
         data.monthData = await KuroApi.getData('month', { roleId: data.roleId })
-      } else {
-        data.dailyData = data.battlePassData
       }
       // 输出日志
       await common.makeMessage(data)
