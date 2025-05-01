@@ -43,7 +43,7 @@ const common = {
     if (gameId === 2) {
       await makeMonthMsg(monthData)
     }
-    bossData = [ towerData, slashTowerData ] || bossData
+    bossData = bossData.length > 0 ? bossData : [ towerData, slashTowerData ]
     await makeBossMsg(gameId, bossData)
   }
 }
@@ -86,7 +86,7 @@ async function makeMonthMsg (monthData) {
   console.log(` > 贸易凭据 - ${ currentTradeCredit || 0 }`);
   console.log(common.single);
   console.log(`${ currentMonth || '' }月资源情况：`);
-  console.log(` >  黑　卡   - ${ monthBlackCard || 0 }`);
+  console.log(` >  黑　卡  - ${ monthBlackCard || 0 }`);
   console.log(` > 研发资源 - ${ monthDevelopResource || 0 }`);
   console.log(` > 贸易凭据 - ${ monthTradeCredit || 0 }`);
   console.log(common.single);

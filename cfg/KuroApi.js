@@ -37,11 +37,11 @@ export class KuroApi {
         body: body
       })
       if (!response.ok) {
-        return false
+        return { code: response.status, msg: response.statusText }
       }
       return await response.json()
     } catch (e) {
-      console.log(e);
+      return { code: e.code, msg: e.msg }
     }
   }
 

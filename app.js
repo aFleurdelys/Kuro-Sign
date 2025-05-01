@@ -112,9 +112,9 @@ export class App {
     let id = Number(process.env.id)
     let app = new App()
     try {
-      // 社区
+      // 社区签到 --- 暂时不可用
       if (id === 1) {
-        return await app.forumSignIn()
+        return // await app.forumSignIn()
       }
       // 游戏 -- Gray Raven(战双)
       const isGr = id === 2
