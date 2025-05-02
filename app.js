@@ -140,7 +140,7 @@ export class App {
         data = lodash.mapKeys(data, (value, key) => {
           return temp[key] || key;
         })
-        data.monthData = await KuroApi.getData('month', { roleId: data.roleId })
+        data.monthData = await KuroApi.getData('month', { roleId: data.roleId }).data
       }
       // 输出日志
       await common.makeMessage(data)

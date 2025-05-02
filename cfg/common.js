@@ -43,7 +43,7 @@ const common = {
     if (gameId === 2) {
       await makeMonthMsg(monthData)
     }
-    bossData = bossData.length > 0 ? bossData : [ towerData, slashTowerData ]
+    bossData = bossData || [ towerData, slashTowerData ]
     await makeBossMsg(gameId, bossData)
   }
 }
