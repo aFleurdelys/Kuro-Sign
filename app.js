@@ -13,7 +13,7 @@ export class App {
       // 获取个人信息
       const mine = await KuroApi.getData('mine');
       const userId = mine?.data?.mine?.userId;
-      if (!userId) {
+      if (!mine.success || !userId) {
         console.error(`[${ mine.code }]: ${ mine.msg }`);
         return;
       }
@@ -21,9 +21,9 @@ export class App {
       const taskList = await KuroApi.getData('taskList', {
         userId: userId
       });
-      let dailyTask = taskList?.data?.dailyTask  // 数组
-      if (!dailyTask.length) {
-        console.log('今日无任务，结束。');
+      let { dailyTask, maxDailyGold } = taskList?.data
+      if (!taskList.success || !dailyTask.length) {
+        console.error(`[${ mine.code }]: ${ mine.msg }`);
         return;
       }
       // 找出 v.needActionTimes - v.completeTimes 的最大值
@@ -36,12 +36,9 @@ export class App {
         pageIndex: 1,
         pageSize: 20,
       });
-      if (!forumList.success) {
-        console.log(`[${ forumList.code }]: ${ forumList.msg }`)
-        return;
-      }
       const postList = forumList?.data?.postList?.slice(0, max) || [] // 数组
-      if (!postList.length) {
+      if (!forumList.success || !postList.length) {
+        console.error(`[${ forumList.code }]: ${ forumList.msg }`)
         return;
       }
       // 5. 任务映射关系
@@ -70,8 +67,7 @@ export class App {
       console.log(common.single)
       // 6. 查询总库洛币
       const data = await KuroApi.getData('totalGold');
-      let gold = lodash.sumBy(dailyTask, (v) => v.gainGold)
-      console.log(`今日库洛币: ${ gold } 个`)
+      console.log(`今日库洛币: ${ maxDailyGold } 个`)
       if (data?.data) {
         console.log(`总库洛币: ${ data.data.goldNum } 个`);
       }
@@ -126,7 +122,7 @@ export class App {
       // 获取游戏小组件
       let result = await KuroApi.getData('widget', params);
 
-      if (result.code !== 200 || !result.data) {
+      if (!result.success || !result.data) {
         console.error(`[${ result.code }]: ${ result.msg }`);
         return;
       }

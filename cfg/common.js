@@ -11,6 +11,11 @@ const common = {
     return new Promise(resolve => setTimeout(resolve, ms))
   },
 
+  /** 时间 */
+  async times (times) {
+    return new Date(times * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+  },
+
   /** 打印 */
   async makeMessage (data) {
     let { gameId, serverName, serverTime, signInTxt, energyData, livenessData, storeEnergyData,
@@ -18,7 +23,7 @@ const common = {
 
     console.log(common.single);
     console.log(`游戏：${ serverName }`);
-    console.log(`时间：${ new Date(serverTime * 1000).toLocaleString() }`);
+    console.log(`时间：${ await common.times(serverTime) }`);
     console.log(`签到：${ signInTxt }`);
     console.log(common.single);
 
@@ -35,7 +40,7 @@ const common = {
       let name = data.name || data.key;
       if (name === '血清') name = ' 血　清 '; // 美化对齐
       let cur = data.cur || 0;
-      let max = maxMap[i];
+      let max = maxMap[i] || 100;
       const bar = progBar(cur, max);
       console.log(`${ name.padEnd(4, '　') }: [${ bar }] ${ cur }/${ max } `);
     });
@@ -55,7 +60,7 @@ function progBar (cur, max) {
 }
 
 async function makeBossMsg (gameId, bossData) {
-  bossData.forEach(boss => {
+  lodash.forEach(bossData, async boss => {
     let { name, key, value, cur, total, timePreDesc, expireTimeStamp, refreshTimeStamp } = boss
     if (total === 0) total = 100;
     const times = expireTimeStamp || refreshTimeStamp || null;
@@ -63,12 +68,12 @@ async function makeBossMsg (gameId, bossData) {
     if (gameId === 3) {
       name = name.split('·')[0]
       key = timePreDesc
-      value = `${cur}/${total}`
+      value = `${ cur }/${ total }`
     }
-    const common = `${name}(${key})`.padEnd(gameId === 3 ? 10 : 0, '　');
-    console.log(`${common} |${ bossBar }| ${ value }`.trim());
+    name = `${ name }(${ key })`.padEnd(gameId === 3 ? 10 : 0, '　');
+    console.log(`${ name } |${ bossBar }| ${ value }`.trim());
     if (times !== null) {
-      console.log(` >>> 刷新时间：${ new Date(times * 1000).toLocaleString() }`);
+      console.log(` >>> 刷新时间：${ await common.times(times) }`);
     }
   });
   console.log(common.single);
