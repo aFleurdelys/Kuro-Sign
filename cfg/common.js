@@ -11,11 +11,6 @@ const common = {
     return new Promise(resolve => setTimeout(resolve, ms))
   },
 
-  /** 时间 */
-  async times (times) {
-    return new Date(times * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
-  },
-
   /** 打印 */
   async makeMessage (data) {
     let { gameId, serverName, serverTime, signInTxt, energyData, livenessData, storeEnergyData,
@@ -23,7 +18,7 @@ const common = {
 
     console.log(common.single);
     console.log(`游戏：${ serverName }`);
-    console.log(`时间：${ await common.times(serverTime) }`);
+    console.log(`时间：${ datetime(serverTime) }`);
     console.log(`签到：${ signInTxt }`);
     console.log(common.single);
 
@@ -59,6 +54,10 @@ function progBar (cur, max) {
   return '█'.repeat(filled) + '═'.repeat(20 - filled);
 }
 
+function datetime(times) {
+  return new Date(times * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+}
+
 async function makeBossMsg (gameId, bossData) {
   lodash.forEach(bossData, async boss => {
     let { name, key, value, cur, total, timePreDesc, expireTimeStamp, refreshTimeStamp } = boss
@@ -73,7 +72,7 @@ async function makeBossMsg (gameId, bossData) {
     name = `${ name }(${ key })`.padEnd(gameId === 3 ? 10 : 0, '　');
     console.log(`${ name } |${ bossBar }| ${ value }`.trim());
     if (times !== null) {
-      console.log(` >>> 刷新时间：${ await common.times(times) }`);
+      console.log(` >>> 刷新时间：${ datetime(times) }`);
     }
   });
   console.log(common.single);
