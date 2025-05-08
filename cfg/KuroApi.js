@@ -1,39 +1,19 @@
-import fetch from "node-fetch";
+import fetch from 'node-fetch'
+
 
 export class KuroApi {
   constructor () {
-    this.token = process.env.token;
-    this.headers = {
-      "Host": "api.kurobbs.com",
-      "Connection": "keep-alive",
-      "Content-Length": "85",
-      "Pragma": "no-cache",
-      "Cache-Control": "no-cache",
-      "b-at": "f7158ce6b2234299b8bce6ccf04e37d3",
-      "User-Agent": "Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "did": "0A138351777EFC8605D59F7A035452E0D93F0F0F",
-      "Accept": "application/json, text/plain, */*",
-      "devCode": "171.37.188.39, Mozilla/5.0 (Linux; Android 12; PCLM10 Build/SKQ1.211113.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2",
-      "token": this.token,
-      "source": "android",
-      "Origin": "https://web-static.kurobbs.com",
-      "X-Requested-With": "com.kurogame.kjq",
-      "Sec-Fetch-Site": "same-site",
-      "Sec-Fetch-Mode": "cors",
-      "Sec-Fetch-Dest": "empty",
-      "Accept-Encoding": "gzip, deflate",
-      "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
-    };
+    this.token = process.env.token
     this.kuroApiUrl = 'https://api.kurobbs.com'
   }
 
   async getData (key = '', data = {}) {
     let { url, body = '' } = await this.getKuroApi(key, data)
+    let headers = this.headers || await this.getHeaders(url)
     try {
       let response = await fetch(url, {
         method: 'post',
-        headers: this.headers,
+        headers: headers,
         body: body
       })
       if (!response.ok) {
@@ -78,7 +58,7 @@ export class KuroApi {
       },
       // 取个人信息
       mine: {
-        url: `${ this.kuroApiUrl }/user/mine`,
+        url: `${ this.kuroApiUrl }/user/mineV2`,
       },
       // 社区签到
       forumSignIn: {
@@ -115,10 +95,37 @@ export class KuroApi {
         url: `${ this.kuroApiUrl }/encourage/gold/getTotalGold`,
       },
     }
-    return ApiMap[name];
+    return ApiMap[name]
   }
+
+  async getHeaders (url = '') {
+    let headers = {
+      Host: 'api.kurobbs.com',
+      Connection: 'keep-alive',
+      source: 'android',
+      token: this.token,
+      devCode: '171.37.188.39, Mozilla/5.0 (... Chrome/97 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2)',
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept-Encoding': 'gzip, deflate',
+      'User-Agent': 'Mozilla/5.0 (... Chrome/97 Mobile Safari/537.36 Kuro/2.4.2 KuroGameBox/2.4.2)',
+      Accept: 'application/json, text/plain, */*',
+      Origin: 'https://web-static.kurobbs.com',
+      'X-Requested-With': 'com.kurogame.kjq',
+      'Accept-Language': 'zh-CN,zhq=0.9,en-USq=0.8,enq=0.7'
+    }
+    if (/(default|user|forum|level|gold)/.test(url)) {
+      headers.devCode = ''
+      headers.version = '2.4.2'
+      headers.versionCode = '2420'
+      headers.model = 'PCLM10'
+      headers.Cookie = `user_token=${ this.token }`
+      headers['User-Agent'] = 'okhttp/3.11.0'
+    }
+    return this.headers = headers
+  }
+
 }
 
 
-export default new KuroApi();
+export default new KuroApi()
 
