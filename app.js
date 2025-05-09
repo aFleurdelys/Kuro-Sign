@@ -44,7 +44,7 @@ export class App {
       // 5. 任务映射关系
       const taskMap = {
         '社区签到': (post) => KuroApi.getData('forumSignIn', { gameId: 3 }),
-        '浏览3篇帖子': (post) => KuroApi.getData('getPostDetail', { postId: post.postId }),
+        '浏览3篇帖子': (post) => KuroApi.getData('postDetail', { postId: post.postId }),
         '点赞5次': (post) => KuroApi.getData('like', { postId: post.postId, toUserId: post.userId }),
         '分享1次帖子': (post) => KuroApi.getData('shareTask', { postId: post.postId }),
       }
