@@ -78,7 +78,7 @@ export class KuroApi {
       //通用论坛点赞
       like: {
         url: `${ this.kuroApiUrl }/forum/like`,
-        body: `forumId=${ data.forumId }&gameId=${ data.gameId }&postId=${ data.postId }&toUserId=${ data.toUserId }`,
+        body: `forumId=${ data.forumId }&gameId=${ data.gameId }&likeType=1&operateType=1&postId=${ data.postId }&postType=${ data.postType }&toUserId=${ data.toUserId }`,
       },
       // 社区分享任务
       shareTask: {

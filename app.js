@@ -1,6 +1,6 @@
 import KuroApi from './cfg/KuroApi.js'
-import lodash from "lodash"
-import common from "./cfg/common.js"
+import lodash from 'lodash'
+import common from './cfg/common.js'
 
 
 export class App {
@@ -17,7 +17,7 @@ export class App {
         console.error(`[${ mine.code }]: ${ mine.msg }`)
         return
       }
-      // 2. 获取任务列表
+      // 获取任务列表
       const taskList = await KuroApi.getData('taskList', {
         userId: userId
       })
@@ -26,9 +26,6 @@ export class App {
         console.error(`[${ mine.code }]: ${ mine.msg }`)
         return
       }
-      // 找出 v.needActionTimes - v.completeTimes 的最大值
-      let max = Math.max(...dailyTask.map(v => v.needActionTimes - v.completeTimes))
-
       // 帖子列表
       const forumList = await KuroApi.getData('forumList', {
         forumId: 9,
@@ -36,26 +33,35 @@ export class App {
         pageIndex: 1,
         pageSize: 20,
       })
-      const postList = forumList?.data?.postList?.slice(0, max) || [] // 数组
+      let postList = forumList?.data?.postList || [] // 数组
       if (!forumList.success || !postList.length) {
         console.error(`[${ forumList.code }]: ${ forumList.msg }`)
         return
       }
-      // 5. 任务映射关系
+      // 任务映射关系
       const taskMap = {
         '社区签到': (post) => KuroApi.getData('forumSignIn', { gameId: 3 }),
         '浏览3篇帖子': (post) => KuroApi.getData('postDetail', { postId: post.postId }),
-        '点赞5次': (post) => KuroApi.getData('like', { postId: post.postId, toUserId: post.userId }),
-        '分享1次帖子': (post) => KuroApi.getData('shareTask', { postId: post.postId }),
+        '点赞5次': (post) => KuroApi.getData('like', {
+          forumId: post.gameForumId,
+          gameId: post.gameId,
+          postId: post.postId,
+          toUserId: post.userId,
+          postType: post.postType
+        }),
+        '分享1次帖子':  (post) => KuroApi.getData('shareTask', { gameId: post.gameId, postId: post.postId }),
       }
-      // 6. 执行任务
+      // 执行任务
       console.log(common.single)
       for (const task of dailyTask) {
-        const { remark, process } = task
+        const { remark, process, needActionTimes, completeTimes } = task
         if (process >= 1.0) {
           console.log(`>>>[${ remark }]: ✅已完成`)
           continue // 已完成，跳过
         }
+        // 找出任务需要执行的次数
+        let max = needActionTimes - completeTimes
+        postList = lodash.sampleSize(postList, max)
         const action = taskMap[remark]
         for (const post of postList) {
           await action(post)
