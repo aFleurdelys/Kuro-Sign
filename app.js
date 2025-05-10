@@ -7,7 +7,7 @@ export class App {
   constructor () {
   }
 
-  // 社区签到和任务
+  // 社区和任务
   async forumSignIn () {
     try {
       // 获取个人信息
@@ -84,7 +84,7 @@ export class App {
   }
 
 
-  // 游戏签到
+  // 游戏
   async gameSignIn (data = {}) {
     const baseParams = {
       gameId: data.gameId,
@@ -95,17 +95,17 @@ export class App {
     if (data.hasSignIn) {
       return `❌ ${ data.signInTxt }`
     }
-    // 初始化签到
+    // 初始化
     await KuroApi.getData('initSignIn', baseParams)
-    // 执行签到
+    // 执行
     const signInParams = {
       ...baseParams,
       reqMonth: new Date().toISOString().slice(5, 7) // 自动生成MM格式月份
     }
     await KuroApi.getData('signin', signInParams)
-    // 查询签到结果
+    // 查询结果
     const { data: [ { goodsName, goodsNum } ] } = await KuroApi.getData('queryRecord', baseParams)
-    // 签到物品
+    // 物品
     return `✅ ${ goodsName } * ${ goodsNum }`
   }
 
@@ -114,7 +114,7 @@ export class App {
     let id = Number(process.env.id)
     let app = new App()
     try {
-      // 社区签到 --- 暂时不可用
+      // 社区
       if (id === 1) {
         return await app.forumSignIn()
       }
@@ -133,7 +133,7 @@ export class App {
         return
       }
       let data = result.data
-      // 签到
+      // 游戏
       data.signInTxt = await app.gameSignIn(data)
       // 数据处理
       if (isGr) {

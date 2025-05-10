@@ -27,7 +27,7 @@ export class KuroApi {
 
   async getKuroApi (name, data) {
     let ApiMap = {
-      // 取绑定游戏账号列表
+      // 绑定游戏账号列表
       roleList: {
         url: `${ this.kuroApiUrl }/gamer/role/default`,
       },
@@ -36,17 +36,17 @@ export class KuroApi {
         url: `${ this.kuroApiUrl }/gamer/widget/game${ data.gameId }/getData`,
         body: `type=${ data.type }&sizeType=${ data.sizeType }`
       },
-      // 取签到配置信息 V2
+      // 配置信息 V2
       initSignIn: {
         url: `${ this.kuroApiUrl }/encourage/signIn/initSignInV2`,
         body: `gameId=${ data.gameId }&serverId=${ data.serverId }&roleId=${ data.roleId }&userId=${ data.userId }`,
       },
-      // 游戏签到 V2
+      // 游戏 V2
       signin: {
         url: `${ this.kuroApiUrl }/encourage/signIn/v2`,
         body: `gameId=${ data.gameId }&serverId=${ data.serverId }&roleId=${ data.roleId }&userId=${ data.userId }&reqMonth=${ data.reqMonth }`,
       },
-      // 取游戏签到记录 V2
+      // 游戏记录 V2
       queryRecord: {
         url: `${ this.kuroApiUrl }/encourage/signIn/queryRecordV2`,
         body: `gameId=${ data.gameId }&serverId=${ data.serverId }&roleId=${ data.roleId }&userId=${ data.userId }`,
@@ -56,21 +56,21 @@ export class KuroApi {
         url: `${ this.kuroApiUrl }/haru/resource/currentMonth`,
         body: `roleId=${ data.roleId }`
       },
-      // 取个人信息
+      // 个人信息
       mine: {
         url: `${ this.kuroApiUrl }/user/mineV2`,
       },
-      // 社区签到
+      // 社区
       forumSignIn: {
         url: `${ this.kuroApiUrl }/user/signIn`,
         body: `gameId=${ data.gameId }`,
       },
-      //取帖子列表
+      //帖子列表
       forumList: {
         url: `${ this.kuroApiUrl }/forum/list`,
         body: `forumId=${ data.forumId }&gameId=${ data.gameId }&pageIndex=${ data.pageIndex }&pageSize=${ data.pageSize }`,
       },
-      //取帖子详情
+      //帖子详情
       postDetail: {
         url: `${ this.kuroApiUrl }/forum/getPostDetail`,
         body: `postId=${ data.postId }`,
@@ -85,12 +85,12 @@ export class KuroApi {
         url: `${ this.kuroApiUrl }/encourage/level/shareTask`,
         body: `gameId=${ data.gameId }&postId=${ data.postId }`,
       },
-      // 取任务列表
+      // 任务列表
       taskList: {
         url: `${ this.kuroApiUrl }/encourage/level/getTaskProcess`,
         body: `gameId=0&userId=${ data.userId }`,
       },
-      // 取库洛币总数
+      // 库洛币总数
       totalGold: {
         url: `${ this.kuroApiUrl }/encourage/gold/getTotalGold`,
       },
