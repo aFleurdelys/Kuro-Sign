@@ -73,7 +73,7 @@ export class KuroApi {
       //帖子详情
       postDetail: {
         url: `${ this.kuroApiUrl }/forum/getPostDetail`,
-        body: `postId=${ data.postId }`,
+        body: `isOnlyPublisher=0&postId=${ data.postId }&showOderType=2`,
       },
       //通用论坛点赞
       like: {

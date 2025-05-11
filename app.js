@@ -40,16 +40,16 @@ export class App {
       }
       // 任务映射关系
       const taskMap = {
-        '用户签到': (post) => KuroApi.getData('forumSignIn', { gameId: 2 }),
-        '浏览3篇帖子': (post) => KuroApi.getData('postDetail', { postId: post.postId }),
-        '点赞5次': (post) => KuroApi.getData('like', {
+        '用户签到': (post) => [ 'forumSignIn', { gameId: 2 } ],
+        '浏览3篇帖子': (post) => [ 'postDetail', { postId: post.postId } ],
+        '点赞5次': (post) => [ 'like', {
           forumId: post.gameForumId,
           gameId: post.gameId,
           postId: post.postId,
           toUserId: post.userId,
           postType: post.postType
-        }),
-        '分享1次帖子':  (post) => KuroApi.getData('shareTask', { gameId: post.gameId, postId: post.postId }),
+        } ],
+        '分享1次帖子': (post) => [ 'shareTask', { gameId: post.gameId, postId: post.postId } ],
       }
       // 执行任务
       console.log(common.single)
@@ -62,9 +62,9 @@ export class App {
         // 找出任务需要执行的次数
         let max = needActionTimes - completeTimes
         postList = lodash.sampleSize(postList, max)
-        const action = taskMap[remark]
         for (const post of postList) {
-          await action(post)
+          const [ key, params ] = await taskMap[remark](post)
+          await KuroApi.getData(key, params)
           // 每次操作后休眠3秒，防止频繁请求
           await common.sleep(3000)
         }
