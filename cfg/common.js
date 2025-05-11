@@ -16,6 +16,7 @@ const common = {
     let { gameId, serverName, serverTime, signInTxt, energyData, livenessData, storeEnergyData,
       weeklyData, battlePassData, bossData, monthData, towerData, slashTowerData } = data
 
+    serverTime = gameId === 2 ? serverTime : energyData.refreshTimeStamp
     console.log(common.single)
     console.log(`游戏：${ serverName }`)
     console.log(`时间：${ datetime(serverTime) }`)

@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "30 0 * * *"
 
+env:
+  TZ: Asia/Shanghai  # 设置时区为北京时间
+
 jobs:
   Run_Script:
     runs-on: ubuntu-latest
