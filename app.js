@@ -61,10 +61,12 @@ export class App {
         }
         // 找出任务需要执行的次数
         let max = needActionTimes - completeTimes
-        postList = lodash.sampleSize(postList, max)
-        for (const post of postList) {
+        for (const [ i, post ] of postList.entries()) {
+          if (i === max) break
           const [ key, params ] = await taskMap[remark](post)
-          await KuroApi.getData(key, params)
+          // 执行
+          let result = await KuroApi.getData(key, params)
+          if (!result.success) max++
           // 每次操作后休眠3秒，防止频繁请求
           await common.sleep(3000)
         }
