@@ -9,7 +9,7 @@ export class KuroApi {
 
   async getData (key = '', data = {}) {
     let { url, body = '' } = await this.getKuroApi(key, data)
-    let headers = this.headers || await this.getHeaders(url)
+    let headers = await this.getHeaders(url)
     try {
       let response = await fetch(url, {
         method: 'post',
@@ -30,6 +30,11 @@ export class KuroApi {
       // 绑定游戏账号列表
       roleList: {
         url: `${ this.kuroApiUrl }/gamer/role/default`,
+      },
+      // 刷新小组件
+      refresh: {
+        url: `${ this.kuroApiUrl }/gamer/widget/game${ data.gameId }/refresh`,
+        body: `type=${ data.type }&sizeType=${ data.sizeType }`
       },
       // 鸣潮、战双小组件
       widget: {
@@ -113,7 +118,7 @@ export class KuroApi {
       'X-Requested-With': 'com.kurogame.kjq',
       'Accept-Language': 'zh-CN,zhq=0.9,en-USq=0.8,enq=0.7'
     }
-    if (/(default|user|forum|level|gold)/.test(url)) {
+    if (/(default|refresh|user|forum|level|gold)/.test(url)) {
       headers.devCode = ''
       headers.version = '2.4.2'
       headers.versionCode = '2420'
@@ -121,7 +126,7 @@ export class KuroApi {
       headers.Cookie = `user_token=${ this.token }`
       headers['User-Agent'] = 'okhttp/3.11.0'
     }
-    return this.headers = headers
+    return headers
   }
 
 }

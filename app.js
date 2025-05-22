@@ -127,6 +127,7 @@ export class App {
         sizeType: isGr ? 2 : 1,
         gameId: id
       }
+      await KuroApi.getData('refresh', params)
       // 获取游戏小组件
       let result = await KuroApi.getData('widget', params)
 
@@ -144,7 +145,7 @@ export class App {
         data = lodash.mapKeys(data, (value, key) => {
           return temp[key] || key
         })
-        data.monthData = (await KuroApi.getData('month', { roleId: data.roleId })).data
+        data.monthData = (await KuroApi.getData('month', { roleId: data.roleId }))?.data
       }
       // 输出日志
       await common.makeMessage(data)
